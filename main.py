@@ -2,8 +2,6 @@ import pygame, sys
 from slider import Slider
 from particle import Particle
 
-CAMERA_SPEED = 2
-
 class Game:
     def __init__(self):
         pygame.init()
@@ -17,6 +15,7 @@ class Game:
         self.creating_new_particle = False
         self.mass_creation_pos = None
         self.paused = False
+        self.camera_speed = 2
         self.camera_pos = (0, 0)
 
     def run(self):
@@ -44,13 +43,19 @@ class Game:
 
             keys = pygame.key.get_pressed()
             if keys[pygame.K_UP]:
-                self.camera_pos = (self.camera_pos[0], self.camera_pos[1] - CAMERA_SPEED)
+                self.camera_pos = (self.camera_pos[0], self.camera_pos[1] - self.camera_speed)
             if keys[pygame.K_DOWN]:
-                self.camera_pos = (self.camera_pos[0], self.camera_pos[1] + CAMERA_SPEED)
+                self.camera_pos = (self.camera_pos[0], self.camera_pos[1] + self.camera_speed)
             if keys[pygame.K_LEFT]:
-                self.camera_pos = (self.camera_pos[0] - CAMERA_SPEED, self.camera_pos[1])
+                self.camera_pos = (self.camera_pos[0] - self.camera_speed, self.camera_pos[1])
             if keys[pygame.K_RIGHT]:
-                self.camera_pos = (self.camera_pos[0] + CAMERA_SPEED, self.camera_pos[1])
+                self.camera_pos = (self.camera_pos[0] + self.camera_speed, self.camera_pos[1])
+            if keys[pygame.K_KP_PLUS]:
+                self.camera_speed += 0.1
+            if keys[pygame.K_KP_MINUS]:
+                self.camera_speed -= 0.1
+            if self.camera_speed < 1:
+                self.camera_speed = 1
 
             # Set mass of next particle
             new_particle_mass = 10 ** (self.mass_slider.value * 3)
@@ -79,8 +84,10 @@ class Game:
             if not self.paused:
                 for particle in self.particles:
                     # Check for particles out of screen
-                    if (particle.pos[0] < -1000 or particle.pos[0] > self.screen.get_width() + 1000
-                            or particle.pos[1] < -1000 or particle.pos[1] > self.screen.get_height() + 1000):
+                    if (particle.pos[0] - self.camera_pos[0] < -1000
+                            or particle.pos[0] - self.camera_pos[0] > self.screen.get_width() + 1000
+                            or particle.pos[1] - self.camera_pos[1] < -1000
+                            or particle.pos[1] - self.camera_pos[1] > self.screen.get_height() + 1000):
                         particle.to_delete = True
 
                     # Interactions between particles
