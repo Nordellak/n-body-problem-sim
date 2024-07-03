@@ -41,6 +41,7 @@ class Game:
             mouse_just_released = previously_mouse_pressed and not mouse_pressed
             mouse_pos = pygame.mouse.get_pos()
 
+            # Camera movement
             keys = pygame.key.get_pressed()
             if keys[pygame.K_UP]:
                 self.camera_pos = (self.camera_pos[0], self.camera_pos[1] - self.camera_speed)
@@ -52,6 +53,8 @@ class Game:
                 self.camera_pos = (self.camera_pos[0] + self.camera_speed, self.camera_pos[1])
             if keys[pygame.K_KP_PLUS]:
                 self.camera_speed += 0.1
+            if self.camera_speed > 10:
+                self.camera_speed = 10
             if keys[pygame.K_KP_MINUS]:
                 self.camera_speed -= 0.1
             if self.camera_speed < 1:
