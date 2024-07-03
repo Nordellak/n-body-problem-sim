@@ -110,10 +110,10 @@ class Game:
             if not self.paused:
                 for particle in self.particles:
                     # Check for particles out of screen
-                    if (particle.pos[0] - self.camera_pos[0] < -1000
-                            or particle.pos[0] - self.camera_pos[0] > self.screen.get_width() + 1000
-                            or particle.pos[1] - self.camera_pos[1] < -1000
-                            or particle.pos[1] - self.camera_pos[1] > self.screen.get_height() + 1000):
+                    if (particle.pos[0] - self.camera_pos[0] < -2500
+                            or particle.pos[0] - self.camera_pos[0] > self.screen.get_width() + 2500
+                            or particle.pos[1] - self.camera_pos[1] < -2500
+                            or particle.pos[1] - self.camera_pos[1] > self.screen.get_height() + 2500):
                         particle.to_delete = True
 
                     # Interactions between particles
