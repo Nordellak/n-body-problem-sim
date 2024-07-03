@@ -2,6 +2,7 @@ import pygame, sys
 from slider import Slider
 from particle import Particle
 
+
 class Game:
     def __init__(self):
         pygame.init()
@@ -17,6 +18,7 @@ class Game:
         self.paused = False
         self.camera_speed = 2
         self.camera_pos = (0, 0)
+        self.focused_particle = -1
 
     def run(self):
         mouse_pressed = False
@@ -33,6 +35,17 @@ class Game:
                     # Reset screen
                     if event.key == pygame.K_r:
                         self.particles = []
+                    # Choose focused_particle
+                    if event.key == pygame.K_TAB:
+                        if len(self.particles) > 0:
+                            if self.focused_particle >= len(self.particles) - 1:
+                                self.focused_particle = 0
+                            else:
+                                self.focused_particle += 1
+
+            # Ensure that the focused particle exists in the particles list
+            if self.focused_particle > len(self.particles) - 1 and self.focused_particle >= 0:
+                self.focused_particle = len(self.particles) - 1
 
             # Get mouse state
             previously_mouse_pressed = mouse_pressed
@@ -41,16 +54,20 @@ class Game:
             mouse_just_released = previously_mouse_pressed and not mouse_pressed
             mouse_pos = pygame.mouse.get_pos()
 
-            # Camera movement
+            # Camera movement with keys
             keys = pygame.key.get_pressed()
             if keys[pygame.K_UP]:
                 self.camera_pos = (self.camera_pos[0], self.camera_pos[1] - self.camera_speed)
+                self.focused_particle = -1
             if keys[pygame.K_DOWN]:
                 self.camera_pos = (self.camera_pos[0], self.camera_pos[1] + self.camera_speed)
+                self.focused_particle = -1
             if keys[pygame.K_LEFT]:
                 self.camera_pos = (self.camera_pos[0] - self.camera_speed, self.camera_pos[1])
+                self.focused_particle = -1
             if keys[pygame.K_RIGHT]:
                 self.camera_pos = (self.camera_pos[0] + self.camera_speed, self.camera_pos[1])
+                self.focused_particle = -1
             if keys[pygame.K_KP_PLUS]:
                 self.camera_speed += 0.1
             if self.camera_speed > 10:
@@ -59,6 +76,12 @@ class Game:
                 self.camera_speed -= 0.1
             if self.camera_speed < 1:
                 self.camera_speed = 1
+
+            # Camera movement tracking particles
+            if self.focused_particle >= 0:
+                particle_pos = self.particles[self.focused_particle].pos
+                self.camera_pos = (particle_pos[0] - self.screen.get_width() / 2,
+                                   particle_pos[1] - self.screen.get_height() / 2)
 
             # Set mass of next particle
             new_particle_mass = 10 ** (self.mass_slider.value * 3)
