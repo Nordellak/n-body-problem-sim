@@ -5,7 +5,6 @@ from random import randint
 VELOCITY_SCALE = 50
 SIZE_SCALE = 1/3
 GRAVITY_CONSTANT = 5
-ORBIT_LINE_LENGTH = 2000
 
 
 class Particle:
