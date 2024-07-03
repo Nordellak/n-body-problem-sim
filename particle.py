@@ -8,9 +8,9 @@ GRAVITY_CONSTANT = 5
 
 
 class Particle:
-    def __init__(self, game, pos, velocity_pos, mass):
+    def __init__(self, game, pos, velocity_pos, camera_pos, mass):
         self.game = game
-        self.pos = pos
+        self.pos = (pos[0] + camera_pos[0], pos[1] + camera_pos[1])
         self.velocity = ((pos[0] - velocity_pos[0]) / VELOCITY_SCALE, (pos[1] - velocity_pos[1]) / VELOCITY_SCALE)
         self.mass = mass
         self.force = (0, 0)
@@ -49,10 +49,13 @@ class Particle:
         self.velocity = (vx, vy)
         self.force = (0, 0)
 
-    def render(self):
+    def render(self, camera_pos):
         for i in range(len(self.orbit)):
             if i == 0:
                 continue
-            pygame.draw.line(self.game.screen, self.color, self.orbit[i], self.orbit[i - 1])
+            pygame.draw.line(self.game.screen, self.color,
+                             (self.orbit[i][0] - camera_pos[0], self.orbit[i][1] - camera_pos[1]),
+                             (self.orbit[i - 1][0] - camera_pos[0], self.orbit[i - 1][1] - camera_pos[1]))
 
-        pygame.draw.circle(self.game.screen, self.color, self.pos, self.radius)
+        pygame.draw.circle(self.game.screen, self.color, (self.pos[0] - camera_pos[0], self.pos[1] - camera_pos[1]),
+                           self.radius)

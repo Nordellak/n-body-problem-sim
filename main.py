@@ -2,6 +2,7 @@ import pygame, sys
 from slider import Slider
 from particle import Particle
 
+CAMERA_SPEED = 2
 
 class Game:
     def __init__(self):
@@ -16,6 +17,7 @@ class Game:
         self.creating_new_particle = False
         self.mass_creation_pos = None
         self.paused = False
+        self.camera_pos = (0, 0)
 
     def run(self):
         mouse_pressed = False
@@ -40,6 +42,16 @@ class Game:
             mouse_just_released = previously_mouse_pressed and not mouse_pressed
             mouse_pos = pygame.mouse.get_pos()
 
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_UP]:
+                self.camera_pos = (self.camera_pos[0], self.camera_pos[1] - CAMERA_SPEED)
+            if keys[pygame.K_DOWN]:
+                self.camera_pos = (self.camera_pos[0], self.camera_pos[1] + CAMERA_SPEED)
+            if keys[pygame.K_LEFT]:
+                self.camera_pos = (self.camera_pos[0] - CAMERA_SPEED, self.camera_pos[1])
+            if keys[pygame.K_RIGHT]:
+                self.camera_pos = (self.camera_pos[0] + CAMERA_SPEED, self.camera_pos[1])
+
             # Set mass of next particle
             new_particle_mass = 10 ** (self.mass_slider.value * 3)
             orbit_length = int(self.orbit_length_slider.value * 1000)
@@ -56,7 +68,7 @@ class Game:
                     self.creating_new_particle = True
                     self.mass_creation_pos = pygame.mouse.get_pos()
                 if mouse_just_released:
-                    new_particle = Particle(self, self.mass_creation_pos, mouse_pos, new_particle_mass)
+                    new_particle = Particle(self, self.mass_creation_pos, mouse_pos, self.camera_pos, new_particle_mass)
                     self.particles.append(new_particle)
                     self.creating_new_particle = False
 
@@ -100,7 +112,7 @@ class Game:
             self.screen.fill((0, 0, 0))
 
             for particle in self.particles:
-                particle.render()
+                particle.render(self.camera_pos)
 
             if self.creating_new_particle:
                 pygame.draw.line(self.screen, "white", self.mass_creation_pos, mouse_pos)
