@@ -4,6 +4,8 @@ particles with its mass.
 
 The particles get a random color, and they leave a trail which denotes their trajectory.
 
+![screenshot.png](screenshot.png)
+
 ## Controls
 - Primary mouse button: click and drag to create particles
 - R: reset the simulation
